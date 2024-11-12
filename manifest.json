@@ -1,0 +1,14 @@
+{
+    "manifest_version": 3,
+    "name": "Bewertungs-Plugin",
+    "version": "1.0",
+    "description": "Bewerte eine Webseite nach Geschwindigkeit.",
+    "permissions": ["downloads", "storage"],
+    "action": {
+      "default_popup": "popup.html"
+    },
+    "background": {
+      "service_worker": "background.js"
+    }
+  }
+  
