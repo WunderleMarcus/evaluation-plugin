@@ -25,3 +25,4 @@ document.getElementById("verifizieren").addEventListener("click", async () => {
         alert("Fehler bei der Verifizierung.");
     }
 });
+// Test 
