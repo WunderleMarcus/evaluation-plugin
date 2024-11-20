@@ -1,14 +1,16 @@
 {
-    "manifest_version": 3,
-    "name": "Bewertungs-Plugin",
-    "version": "1.0",
-    "description": "Bewerte eine Webseite nach Geschwindigkeit.",
-    "permissions": ["downloads", "storage"],
-    "action": {
+  "manifest_version": 3,
+  "name": "Bewertungs-Plugin",
+  "version": "1.0",
+  "description": "Bewerte eine Webseite nach Geschwindigkeit.",
+  "permissions": ["downloads", "storage", "identity"],
+  "host_permissions": ["https://*/*"],
+  "action": {
       "default_popup": "popup.html"
-    },
-    "background": {
+  },
+  "background": {
       "service_worker": "background.js"
-    }
   }
+}
+
   

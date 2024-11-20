@@ -1,8 +1,3 @@
-// Bewertungen initialisieren
-if (!localStorage.getItem("bewertungen")) {
-    localStorage.setItem("bewertungen", JSON.stringify([]));
-}
-
 // Event Listener für die Buttons
 document.getElementById("zu-schnell").addEventListener("click", () => bewertungSpeichern("Zu schnell"));
 document.getElementById("passend").addEventListener("click", () => bewertungSpeichern("Passend"));
@@ -10,35 +5,63 @@ document.getElementById("zu-langsam").addEventListener("click", () => bewertungS
 document.getElementById("exportieren").addEventListener("click", exportiereCSV);
 
 // Funktion zum Speichern der Bewertung
-function bewertungSpeichern(bewertung) {
+async function bewertungSpeichern(bewertung) {
     const zeit = new Date().toLocaleString();
-    const bewertungen = JSON.parse(localStorage.getItem("bewertungen"));
-    bewertungen.push({ zeit, bewertung });
-    localStorage.setItem("bewertungen", JSON.stringify(bewertungen));
-    alert(`Bewertung "${bewertung}" gespeichert.`);
+
+    try {
+        const response = await fetch("https://example.com/api/save-rating", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                Authorization: `Bearer ${localStorage.getItem("token")}` // Token nach Verifizierung speichern
+            },
+            body: JSON.stringify({ zeit, bewertung })
+        });
+        const result = await response.json();
+
+        if (result.success) {
+            alert(`Bewertung "${bewertung}" gespeichert.`);
+        } else {
+            alert("Fehler beim Speichern der Bewertung.");
+        }
+    } catch (error) {
+        console.error(error);
+        alert("Fehler beim Speichern der Bewertung.");
+    }
 }
 
 // Funktion zum Exportieren der CSV
-function exportiereCSV() {
-    const bewertungen = JSON.parse(localStorage.getItem("bewertungen"));
-    if (bewertungen.length === 0) {
-        alert("Keine Bewertungen vorhanden.");
-        return;
-    }
+async function exportiereCSV() {
+    try {
+        const response = await fetch("https://example.com/api/get-ratings", {
+            method: "GET",
+            headers: {
+                Authorization: `Bearer ${localStorage.getItem("token")}`
+            }
+        });
 
-    // CSV-Header und Zeilen
-    let csvContent = "Zeit,Bewertung\n";
-    bewertungen.forEach(b => {
-        csvContent += `${b.zeit},${b.bewertung}\n`;
-    });
+        const ratings = await response.json();
 
-    // CSV an Background-Service schicken
-    chrome.runtime.sendMessage({ csv: csvContent }, (response) => {
-        if (response && response.success) {
-            alert("CSV-Datei wurde heruntergeladen.");
-        } else {
-            alert("Fehler beim Exportieren der CSV-Datei.");
+        if (!ratings.length) {
+            alert("Keine Bewertungen vorhanden.");
+            return;
         }
-    });
+
+        let csvContent = "Zeit,Bewertung\n";
+        ratings.forEach(r => {
+            csvContent += `${r.zeit},${r.bewertung}\n`;
+        });
+
+        const blob = new Blob([csvContent], { type: "text/csv" });
+        const url = URL.createObjectURL(blob);
+        chrome.downloads.download({
+            url: url,
+            filename: `bewertungen_${new Date().toISOString().split('T')[0]}.csv`,
+            saveAs: true
+        });
+
+    } catch (error) {
+        console.error(error);
+        alert("Fehler beim Exportieren der CSV-Datei.");
+    }
 }
-// Test push

@@ -6,16 +6,21 @@
     <style>
         body { font-family: Arial, sans-serif; width: 200px; padding: 10px; }
         button { margin: 5px 0; padding: 10px; width: 100%; }
+        input { margin: 5px 0; padding: 8px; width: 100%; }
     </style>
 </head>
 <body>
-    <h2>TS-Bewertung der Geschwindigkeit
-        
-    </h2>
+    <h2>TS-Benutzerverifizierung</h2>
+    <input type="email" id="email" placeholder="E-Mail eingeben">
+    <button id="verifizieren">Verifizieren</button>
+
+    <h2>TS-Bewertung der Geschwindigkeit</h2>
     <button id="zu-schnell">Zu schnell</button>
     <button id="passend">Passend</button>
     <button id="zu-langsam">Zu langsam</button>
     <button id="exportieren">Exportieren als CSV</button>
+
+    <script src="auth.js"></script>
     <script src="popup.js"></script>
 </body>
 </html>
